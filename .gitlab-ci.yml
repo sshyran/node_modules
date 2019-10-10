@@ -13,8 +13,6 @@ stages:
  - release
 
 modules:
-  tags:
-    - docker
   cache: {}
   stage: build
   script:
@@ -32,9 +30,13 @@ modules:
     - fi
 
     - shopt -s extglob
-    - mv -r ./* ./../
+    - echo "1"
+    - ls -l
+    - mv ./* ./../
+    - echo "2"
     - ls -l
     - cd ..
+    - echo "3"
     - ls -l
 
     # create a .version file
