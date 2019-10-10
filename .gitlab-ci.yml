@@ -32,7 +32,7 @@ modules:
     - fi
 
     - shopt -s extglob
-    - mv ./* ./../
+    - mv -r ./* ./../
     - ls -l
     - cd ..
     - ls -l
