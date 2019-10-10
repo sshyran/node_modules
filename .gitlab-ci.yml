@@ -21,8 +21,8 @@ modules:
 
     # Because of race conditions with merge squashes leaving broken references we circumvent the default git strategy GIT_STRATEGY: none
     - cd ..
-    - "git clone -n https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/hybrix/hybrixd/interface.git --depth 10 --single-branch --branch $CI_COMMIT_REF_NAME"
-    - cd interface
+    - "git clone -n https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/hybrix/hybrixd/dependencies/node_modules.git --depth 10 --single-branch --branch $CI_COMMIT_REF_NAME"
+    - cd node_modules
     - if git log | grep $CI_COMMIT_SHA; then
     -   echo "Commit $CI_COMMIT_SHA exists, retrieving it."
     -   "git -c advice.detachedHead=false checkout $CI_COMMIT_SHA"
@@ -30,6 +30,9 @@ modules:
     -   echo "Commit $CI_COMMIT_SHA does not exist, retrieving latest in branch $CI_COMMIT_REF_NAME"
     -   "git checkout"
     - fi
+
+    - shopt -s extglob
+    - mv ./* ./
 
     # create a .version file
     - timestamp=$(date -u '+%Y-%m-%dT%H:%M:%S+00:00')
