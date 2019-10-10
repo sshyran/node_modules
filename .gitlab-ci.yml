@@ -29,16 +29,10 @@ modules:
     -   "git checkout"
     - fi
 
+    # remove git-files from artifact
+    - rm -rf ./.git* || true
+
     - shopt -s extglob
-    - pwd
-    - echo "1"
-    - ls -l
-    - mv ./* ./
-    - echo "2"
-    - ls -l
-    - cd ./
-    - echo "3"
-    - ls -l
     - pwd
 
     # create a .version file
