@@ -16,24 +16,8 @@ modules:
   cache: {}
   stage: build
   script:
-
-    # Because of race conditions with merge squashes leaving broken references we circumvent the default git strategy GIT_STRATEGY: none
-    - cd ..
-    - "git clone -n https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/hybrix/hybrixd/dependencies/node_modules.git --depth 10 --single-branch --branch $CI_COMMIT_REF_NAME"
-    - cd node_modules
-    - if git log | grep $CI_COMMIT_SHA; then
-    -   echo "Commit $CI_COMMIT_SHA exists, retrieving it."
-    -   "git -c advice.detachedHead=false checkout $CI_COMMIT_SHA"
-    - else
-    -   echo "Commit $CI_COMMIT_SHA does not exist, retrieving latest in branch $CI_COMMIT_REF_NAME"
-    -   "git checkout"
-    - fi
-
     # remove git-files from artifact
     - rm -rf ./.git* || true
-
-    - shopt -s extglob
-    - pwd
 
     # create a .version file
     - timestamp=$(date -u '+%Y-%m-%dT%H:%M:%S+00:00')
@@ -43,61 +27,6 @@ modules:
   artifacts:
     paths:
     - ./*
-
-dist:
-  stage: release
-  script:
-  # install the packages that we need
-  - apk update
-  - apk add xz
-  - apk add zip
-
-  # set variables
-  # version -> branchname without '-release'
-  - version=${CI_COMMIT_REF_NAME/-release/}
-  - component=interface
-  - file=hybrixd.${component}.${version}
-  - fileLatest=hybrixd.${component}.latest
-  - path=interface/${version}/
-
-  - cp -r ./dist/. /tmp/${component}/
-
-  - cd /tmp
-  - git clone --depth=1 https://oauth2:${PRIVATE_TOKEN}@gitlab.com/hybrix/dist
-  - mkdir -p ./dist/interface/${version}/
-
-  - ls
-  - ls ${component}
-
-  - zip -r ${file}.zip ${component}/.
-  - tar -zcvf ${file}.tar.gz ${component}/.
-  - tar cfJ ${file}.tar.xz ${component}/.
-
-  - cp ${file}.zip ./dist/${path}${file}.zip
-  - cp ${file}.tar.gz ./dist/${path}${file}.tar.gz
-  - cp ${file}.tar.xz ./dist/${path}${file}.tar.xz
-
-  - mkdir -p ./dist/${component}/latest
-  - cp ${file}.zip ./dist/${component}/latest/${fileLatest}.zip
-  - cp ${file}.tar.gz ./dist/${component}/latest/${fileLatest}.tar.gz
-  - cp ${file}.tar.xz ./dist/${component}/latest/${fileLatest}.tar.xz
-
-  # for interface we like to distribute the js files directly as well
-  - cp -r ./${component}/*.js ./dist/${path}
-  - cp -r ./${component}/*.js ./dist/${component}/latest/
-  - cd ./dist/
-
-  # configure git-user
-  - "git config --global user.name \"${GITLAB_USER_NAME}\""
-  - "git config --global user.email \"${GITLAB_USER_EMAIL}\""
-
-  # add, commit and push
-  - "git add ."
-  - "git commit -m \"release ${version} ${component}\" || true"
-  - "git push https://oauth2:${PRIVATE_TOKEN}@gitlab.com/hybrix/dist -f || true"
-
-  only:
-  - tags
 
 # ---------------------------------------------------------------------------
 
