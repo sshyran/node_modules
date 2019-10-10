@@ -32,7 +32,10 @@ modules:
     - fi
 
     - shopt -s extglob
-    - mv ./* ./
+    - mv ./* ./../
+    - ls -l
+    - cd ..
+    - ls -l
 
     # create a .version file
     - timestamp=$(date -u '+%Y-%m-%dT%H:%M:%S+00:00')
