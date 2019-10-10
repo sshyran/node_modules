@@ -30,15 +30,16 @@ modules:
     - fi
 
     - shopt -s extglob
+    - pwd
     - echo "1"
     - ls -l
     - mv ./* ./../
     - echo "2"
     - ls -l
     - cd ..
-    - rm .git
     - echo "3"
     - ls -l
+    - pwd
 
     # create a .version file
     - timestamp=$(date -u '+%Y-%m-%dT%H:%M:%S+00:00')
