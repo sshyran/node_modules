@@ -36,6 +36,7 @@ modules:
     - echo "2"
     - ls -l
     - cd ..
+    - rm .git
     - echo "3"
     - ls -l
 
